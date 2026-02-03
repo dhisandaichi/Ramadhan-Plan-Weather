@@ -1,4 +1,3 @@
-import { WiThermometer, WiHumidity, WiStrongWind, WiRaindrop, WiDaySunny } from 'react-icons/wi';
 import { getWeatherDescription } from '../utils/calculators';
 
 const WeatherCard = ({ weatherData, location }) => {
@@ -6,6 +5,47 @@ const WeatherCard = ({ weatherData, location }) => {
 
     const current = weatherData.current;
     const weather = getWeatherDescription(current.weather_code);
+    const currentHour = new Date().getHours();
+
+    // Get next 24 hours of forecast data
+    const getNext24Hours = () => {
+        const hourly = weatherData.hourly;
+        const result = [];
+
+        // Calculate total hours available today
+        const hoursLeftToday = 24 - currentHour;
+
+        // Get hours from today (remaining hours)
+        for (let i = 0; i < hoursLeftToday && i < 24; i++) {
+            const hourIndex = currentHour + i;
+            if (hourIndex < hourly.time.length) {
+                result.push({
+                    time: hourly.time[hourIndex],
+                    temp: hourly.temperature_2m[hourIndex],
+                    code: hourly.weather_code[hourIndex],
+                    isToday: true
+                });
+            }
+        }
+
+        // Get hours from tomorrow to complete 24 hours
+        const hoursNeededFromTomorrow = 24 - result.length;
+        for (let i = 0; i < hoursNeededFromTomorrow; i++) {
+            const hourIndex = 24 + i; // Tomorrow's hours start at index 24
+            if (hourIndex < hourly.time.length) {
+                result.push({
+                    time: hourly.time[hourIndex],
+                    temp: hourly.temperature_2m[hourIndex],
+                    code: hourly.weather_code[hourIndex],
+                    isToday: false
+                });
+            }
+        }
+
+        return result;
+    };
+
+    const next24Hours = getNext24Hours();
 
     return (
         <div className="relative overflow-hidden rounded-3xl bg-ramadhan-900/60 border border-primary-500/30">
@@ -31,88 +71,51 @@ const WeatherCard = ({ weatherData, location }) => {
                     </p>
                 </div>
 
-                {/* Main Weather Display */}
-                <div className="grid md:grid-cols-2 gap-8 mb-6">
-                    {/* Temperature & Condition */}
-                    <div className="flex items-center gap-6">
-                        <div className="text-8xl md:text-9xl animate-float">
-                            {weather.icon}
-                        </div>
-                        <div>
-                            <div className="text-6xl md:text-7xl font-bold text-shadow-lg">
-                                {Math.round(current.temperature_2m)}°
-                            </div>
-                            <div className="text-xl md:text-2xl font-semibold mt-2 text-white/90">
-                                {weather.desc}
-                            </div>
-                            <div className="text-sm text-white/60 mt-1">
-                                Terasa seperti {Math.round(current.apparent_temperature)}°C
-                            </div>
-                        </div>
+                {/* Main Weather Display - Simplified */}
+                <div className="flex items-center gap-6 mb-6">
+                    <div className="text-8xl md:text-9xl animate-float">
+                        {weather.icon}
                     </div>
-
-                    {/* Weather Metrics Grid */}
-                    <div className="grid grid-cols-2 gap-4">
-                        {/* Humidity */}
-                        <div className="bg-ramadhan-950/50 rounded-xl p-3 border border-white/5">
-                            <div className="flex items-center gap-2 text-primary-300/80 mb-1">
-                                <WiHumidity className="text-2xl" />
-                                <span className="text-sm font-medium">Kelembaban</span>
-                            </div>
-                            <div className="text-3xl font-bold">{current.relative_humidity_2m}%</div>
+                    <div>
+                        <div className="text-6xl md:text-7xl font-bold text-shadow-lg">
+                            {Math.round(current.temperature_2m)}°
                         </div>
-
-                        {/* Wind Speed */}
-                        <div className="bg-ramadhan-950/50 rounded-xl p-3 border border-white/5">
-                            <div className="flex items-center gap-2 text-primary-300/80 mb-1">
-                                <WiStrongWind className="text-2xl" />
-                                <span className="text-sm font-medium">Kec. Angin</span>
-                            </div>
-                            <div className="text-3xl font-bold">{Math.round(current.wind_speed_10m)}</div>
-                            <div className="text-xs text-white/50">km/jam</div>
+                        <div className="text-xl md:text-2xl font-semibold mt-2 text-white/90">
+                            {weather.desc}
                         </div>
-
-                        {/* Precipitation */}
-                        <div className="bg-ramadhan-950/50 rounded-xl p-3 border border-white/5">
-                            <div className="flex items-center gap-2 text-primary-300/80 mb-1">
-                                <WiRaindrop className="text-2xl" />
-                                <span className="text-sm font-medium">Curah Hujan</span>
-                            </div>
-                            <div className="text-3xl font-bold">{current.precipitation || 0}</div>
-                            <div className="text-xs text-white/50">mm</div>
-                        </div>
-
-                        {/* Cloud Cover */}
-                        <div className="bg-ramadhan-950/50 rounded-xl p-3 border border-white/5">
-                            <div className="flex items-center gap-2 text-primary-300/80 mb-1">
-                                <WiDaySunny className="text-2xl" />
-                                <span className="text-sm font-medium">Awan</span>
-                            </div>
-                            <div className="text-3xl font-bold">{current.cloud_cover}%</div>
+                        <div className="text-sm text-white/60 mt-1">
+                            Terasa seperti {Math.round(current.apparent_temperature)}°C
                         </div>
                     </div>
                 </div>
 
-                {/* Hourly Forecast Preview */}
-                <div className="bg-ramadhan-950/50 rounded-2xl p-4 mt-4 border border-white/5">
-                    <h3 className="font-semibold mb-3 text-primary-300">Prediksi Per Jam (Hari Ini)</h3>
-                    <div className="flex gap-4 overflow-x-auto pb-2">
-                        {weatherData.hourly.time.slice(0, 12).map((time, index) => {
-                            const hour = new Date(time).getHours();
-                            const temp = weatherData.hourly.temperature_2m[index];
-                            const code = weatherData.hourly.weather_code[index];
-                            const hourWeather = getWeatherDescription(code);
+                {/* 24-Hour Forecast */}
+                <div className="bg-ramadhan-950/50 rounded-2xl p-4 border border-white/5">
+                    <h3 className="font-semibold mb-3 text-primary-300">Prediksi 24 Jam ke Depan</h3>
+                    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
+                        {next24Hours.map((hourData, index) => {
+                            const hour = new Date(hourData.time).getHours();
+                            const hourWeather = getWeatherDescription(hourData.code);
+                            const isNow = index === 0;
 
                             return (
                                 <div
                                     key={index}
-                                    className="flex-shrink-0 text-center bg-ramadhan-900/50 rounded-xl p-3 min-w-[70px] hover:bg-primary-900/30 transition-all border border-white/5"
+                                    className={`flex-shrink-0 text-center rounded-xl p-3 min-w-[70px] transition-all border ${isNow
+                                            ? 'bg-primary-600/30 border-primary-500/50'
+                                            : 'bg-ramadhan-900/50 border-white/5 hover:bg-primary-900/30'
+                                        }`}
                                 >
-                                    <div className="text-sm font-semibold text-white/70 mb-1">
-                                        {hour.toString().padStart(2, '0')}:00
+                                    <div className={`text-sm font-semibold mb-1 ${isNow ? 'text-primary-300' : 'text-white/70'}`}>
+                                        {isNow ? 'Skg' : `${hour.toString().padStart(2, '0')}:00`}
                                     </div>
                                     <div className="text-3xl my-2">{hourWeather.icon}</div>
-                                    <div className="text-lg font-bold">{Math.round(temp)}°</div>
+                                    <div className={`text-lg font-bold ${isNow ? 'text-primary-300' : ''}`}>
+                                        {Math.round(hourData.temp)}°
+                                    </div>
+                                    {!hourData.isToday && index > 0 && new Date(hourData.time).getHours() === 0 && (
+                                        <div className="text-xs text-gold-400 mt-1">Besok</div>
+                                    )}
                                 </div>
                             );
                         })}

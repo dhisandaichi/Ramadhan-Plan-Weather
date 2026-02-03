@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { WiDaySunny, WiRain, WiCloudy } from 'react-icons/wi';
-import { MdRestaurantMenu, MdExplore, MdHome } from 'react-icons/md';
+import { MdExplore, MdHome } from 'react-icons/md';
 import { FaMosque } from 'react-icons/fa';
 
 // Services
@@ -8,6 +7,7 @@ import { getWeatherData, getMarineData, getCurrentLocation, INDONESIAN_CITIES } 
 
 // Components
 import LoadingScreen from './components/LoadingScreen';
+import LocationPermissionModal from './components/LocationPermissionModal';
 import LocationSelector from './components/LocationSelector';
 import WeatherCard from './components/WeatherCard';
 import PrayerTimesCard from './components/PrayerTimesCard';
@@ -25,24 +25,59 @@ function App() {
   const [marineData, setMarineData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [locationDecided, setLocationDecided] = useState(false);
 
-  // Fetch location on mount
+  // Show location modal on mount
   useEffect(() => {
-    const initLocation = async () => {
+    // Check if location was already decided (e.g., from a previous session)
+    const savedLocation = localStorage.getItem('ramadhanplan_location');
+    if (savedLocation) {
       try {
-        const coords = await getCurrentLocation();
-        setLocation({
-          name: 'Lokasi Saya',
-          latitude: coords.latitude,
-          longitude: coords.longitude
-        });
+        const parsed = JSON.parse(savedLocation);
+        setLocation(parsed);
+        setLocationDecided(true);
       } catch {
-        // Default to Jakarta
-        setLocation(INDONESIAN_CITIES[0]);
+        setShowLocationModal(true);
       }
-    };
-    initLocation();
+    } else {
+      // Show modal to ask for permission
+      setShowLocationModal(true);
+    }
   }, []);
+
+  // Handle user allowing location access
+  const handleAllowLocation = async () => {
+    setShowLocationModal(false);
+    setLocationDecided(true);
+
+    try {
+      const coords = await getCurrentLocation();
+      const newLocation = {
+        name: 'Lokasi Saya',
+        latitude: coords.latitude,
+        longitude: coords.longitude
+      };
+      setLocation(newLocation);
+      localStorage.setItem('ramadhanplan_location', JSON.stringify(newLocation));
+    } catch {
+      // If GPS request fails or is denied, default to Jakarta
+      const jakarta = INDONESIAN_CITIES[0];
+      setLocation(jakarta);
+      localStorage.setItem('ramadhanplan_location', JSON.stringify(jakarta));
+    }
+  };
+
+  // Handle user declining location access
+  const handleDeclineLocation = () => {
+    setShowLocationModal(false);
+    setLocationDecided(true);
+
+    // Default to Jakarta
+    const jakarta = INDONESIAN_CITIES[0];
+    setLocation(jakarta);
+    localStorage.setItem('ramadhanplan_location', JSON.stringify(jakarta));
+  };
 
   // Load weather data function
   const loadWeatherData = useCallback(async () => {
@@ -76,9 +111,21 @@ function App() {
 
   const handleLocationChange = (newLocation) => {
     setLocation(newLocation);
+    localStorage.setItem('ramadhanplan_location', JSON.stringify(newLocation));
   };
 
-  if (loading) {
+  // Show location permission modal
+  if (showLocationModal) {
+    return (
+      <LocationPermissionModal
+        onAllow={handleAllowLocation}
+        onDecline={handleDeclineLocation}
+      />
+    );
+  }
+
+  // Show loading screen while waiting for location or weather data
+  if (!locationDecided || loading) {
     return <LoadingScreen />;
   }
 
@@ -129,29 +176,35 @@ function App() {
         {/* Weather Card - Always visible */}
         <WeatherCard weatherData={weatherData} location={location} />
 
-        {/* Prayer Times Card - Always visible */}
-        <PrayerTimesCard
-          latitude={location.latitude}
-          longitude={location.longitude}
-          cityName={location.name}
-        />
-
         {/* Tab Content */}
         {activeTab === 'harian' && (
           <div className="space-y-6 animate-fade-in">
-            {/* Hydration Card */}
+            {/* 1. Shalat Berikutnya (Prayer Times Card) */}
+            <PrayerTimesCard
+              latitude={location.latitude}
+              longitude={location.longitude}
+              cityName={location.name}
+            />
+
+            {/* 2. Target Hidrasi Hari Ini */}
             <HydrationCard weatherData={weatherData} />
 
-            {/* Rain Radar (Siap Jalan) */}
+            {/* 3. Siap Jalan (Rain Radar) */}
             <RainRadar weatherData={weatherData} />
 
-            {/* Laundry Index */}
+            {/* 4. Indeks Jemuran */}
             <LaundryIndex weatherData={weatherData} />
           </div>
         )}
 
         {activeTab === 'ramadhan' && (
           <div className="space-y-6 animate-fade-in">
+            {/* Prayer Times also on Ramadhan tab */}
+            <PrayerTimesCard
+              latitude={location.latitude}
+              longitude={location.longitude}
+              cityName={location.name}
+            />
             <SahurPlanner weatherData={weatherData} />
             <IftarPlanner weatherData={weatherData} />
           </div>
