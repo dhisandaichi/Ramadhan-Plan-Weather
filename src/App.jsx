@@ -44,14 +44,10 @@ function App() {
     initLocation();
   }, []);
 
-  // Fetch weather when location changes
-  useEffect(() => {
-    if (location) {
-      loadWeatherData();
-    }
-  }, [location, loadWeatherData]);
-
+  // Load weather data function
   const loadWeatherData = useCallback(async () => {
+    if (!location) return;
+
     try {
       setLoading(true);
       setError(null);
@@ -70,6 +66,13 @@ function App() {
       setLoading(false);
     }
   }, [location]);
+
+  // Fetch weather when location changes
+  useEffect(() => {
+    if (location) {
+      loadWeatherData();
+    }
+  }, [location, loadWeatherData]);
 
   const handleLocationChange = (newLocation) => {
     setLocation(newLocation);
