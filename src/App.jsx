@@ -1,0 +1,199 @@
+import { useState, useEffect, useCallback } from 'react';
+import { WiDaySunny, WiRain, WiCloudy } from 'react-icons/wi';
+import { MdRestaurantMenu, MdExplore, MdHome } from 'react-icons/md';
+import { FaMosque } from 'react-icons/fa';
+
+// Services
+import { getWeatherData, getMarineData, getCurrentLocation, INDONESIAN_CITIES } from './services/weatherService';
+
+// Components
+import LoadingScreen from './components/LoadingScreen';
+import LocationSelector from './components/LocationSelector';
+import WeatherCard from './components/WeatherCard';
+import PrayerTimesCard from './components/PrayerTimesCard';
+import HydrationCard from './components/HydrationCard';
+import LaundryIndex from './components/LaundryIndex';
+import RainRadar from './components/RainRadar';
+import SahurPlanner from './components/SahurPlanner';
+import IftarPlanner from './components/IftarPlanner';
+import TourismPlanner from './components/TourismPlanner';
+
+function App() {
+  const [activeTab, setActiveTab] = useState('harian');
+  const [location, setLocation] = useState(null);
+  const [weatherData, setWeatherData] = useState(null);
+  const [marineData, setMarineData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch location on mount
+  useEffect(() => {
+    const initLocation = async () => {
+      try {
+        const coords = await getCurrentLocation();
+        setLocation({
+          name: 'Lokasi Saya',
+          latitude: coords.latitude,
+          longitude: coords.longitude
+        });
+      } catch {
+        // Default to Jakarta
+        setLocation(INDONESIAN_CITIES[0]);
+      }
+    };
+    initLocation();
+  }, []);
+
+  // Fetch weather when location changes
+  useEffect(() => {
+    if (location) {
+      loadWeatherData();
+    }
+  }, [location, loadWeatherData]);
+
+  const loadWeatherData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const [weather, marine] = await Promise.all([
+        getWeatherData(location.latitude, location.longitude),
+        getMarineData(location.latitude, location.longitude).catch(() => null)
+      ]);
+
+      setWeatherData(weather);
+      setMarineData(marine);
+    } catch (err) {
+      setError('Gagal memuat data cuaca. Silakan coba lagi.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [location]);
+
+  const handleLocationChange = (newLocation) => {
+    setLocation(newLocation);
+  };
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="card-premium text-center max-w-md">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold mb-2">Oops!</h2>
+          <p className="text-white/70 mb-4">{error}</p>
+          <button onClick={loadWeatherData} className="btn-primary">
+            Coba Lagi
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const tabs = [
+    { id: 'harian', name: 'Beranda', icon: <MdHome />, emoji: '🏠' },
+    { id: 'ramadhan', name: 'Ramadhan', icon: <FaMosque />, emoji: '🌙' },
+    { id: 'wisata', name: 'Wisata', icon: <MdExplore />, emoji: '🗺️' },
+  ];
+
+  return (
+    <div className="min-h-screen pb-24">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-ramadhan-950/80 backdrop-blur-lg border-b border-white/10">
+        <div className="max-w-4xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="text-3xl">🌙</div>
+              <div>
+                <h1 className="text-xl font-bold font-display gradient-text">RamadhanPlan</h1>
+                <p className="text-xs text-white/50">Cuaca Bukan Sekadar Angka</p>
+              </div>
+            </div>
+            <LocationSelector
+              currentLocation={location}
+              onLocationChange={handleLocationChange}
+            />
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {/* Weather Card - Always visible */}
+        <WeatherCard weatherData={weatherData} location={location} />
+
+        {/* Prayer Times Card - Always visible */}
+        <PrayerTimesCard
+          latitude={location.latitude}
+          longitude={location.longitude}
+          cityName={location.name}
+        />
+
+        {/* Tab Content */}
+        {activeTab === 'harian' && (
+          <div className="space-y-6 animate-fade-in">
+            {/* Hydration Card */}
+            <HydrationCard weatherData={weatherData} />
+
+            {/* Rain Radar (Siap Jalan) */}
+            <RainRadar weatherData={weatherData} />
+
+            {/* Laundry Index */}
+            <LaundryIndex weatherData={weatherData} />
+          </div>
+        )}
+
+        {activeTab === 'ramadhan' && (
+          <div className="space-y-6 animate-fade-in">
+            <SahurPlanner weatherData={weatherData} />
+            <IftarPlanner weatherData={weatherData} />
+          </div>
+        )}
+
+        {activeTab === 'wisata' && (
+          <div className="animate-fade-in">
+            <TourismPlanner weatherData={weatherData} marineData={marineData} />
+          </div>
+        )}
+      </main>
+
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-ramadhan-950/95 backdrop-blur-lg border-t border-white/10 z-50">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="flex justify-around py-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex flex-col items-center py-2 px-6 rounded-xl transition-all ${activeTab === tab.id
+                  ? 'bg-primary-600/30 text-primary-300 scale-105'
+                  : 'text-white/50 hover:text-white/80 hover:bg-white/5'
+                  }`}
+              >
+                <span className="text-2xl mb-1">{tab.emoji}</span>
+                <span className="text-xs font-semibold">{tab.name}</span>
+                {activeTab === tab.id && (
+                  <div className="w-8 h-1 bg-gradient-to-r from-primary-400 to-gold-400 rounded-full mt-1"></div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      {/* Footer - Data Sources */}
+      <footer className="max-w-4xl mx-auto px-4 py-4 mb-20">
+        <div className="text-center text-xs text-white/30">
+          <p>Data cuaca dari Open-Meteo | Jadwal shalat dari Aladhan</p>
+          <p className="mt-1">© 2026 RamadhanPlan - Made with ❤️ for Indonesia</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+export default App;
