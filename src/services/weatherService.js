@@ -1,14 +1,36 @@
 import axios from 'axios';
+import {
+    weatherRateLimiter,
+    validateCoordinates,
+    securityLog
+} from '../utils/security';
 
 const OPEN_METEO_API = import.meta.env.VITE_OPEN_METEO_API || 'https://api.open-meteo.com/v1';
 
 /**
- * Get current weather and forecast data
+ * Get current weather and forecast data with security measures
  * @param {number} latitude 
  * @param {number} longitude 
  * @returns {Promise<Object>} Weather data
  */
 export const getWeatherData = async (latitude, longitude) => {
+    // Rate limit check (2 RPS max)
+    const limitCheck = weatherRateLimiter.checkLimit();
+    if (!limitCheck.allowed) {
+        securityLog.log('RATE_LIMIT_EXCEEDED', {
+            service: 'weather',
+            waitTime: limitCheck.waitTime
+        });
+        throw new Error(`Terlalu banyak permintaan. Tunggu ${limitCheck.waitTime} detik.`);
+    }
+
+    // Validate coordinates
+    const coordValidation = validateCoordinates(latitude, longitude);
+    if (!coordValidation.isValid) {
+        securityLog.log('INVALID_COORDINATES', { latitude, longitude, reason: coordValidation.reason });
+        throw new Error(coordValidation.reason);
+    }
+
     try {
         const response = await axios.get(`${OPEN_METEO_API}/forecast`, {
             params: {
@@ -45,23 +67,43 @@ export const getWeatherData = async (latitude, longitude) => {
                 ].join(','),
                 timezone: 'Asia/Jakarta',
                 forecast_days: 7
-            }
+            },
+            timeout: 10000 // 10 second timeout for security
         });
 
+        securityLog.log('API_SUCCESS', { service: 'weather' });
         return response.data;
     } catch (error) {
+        securityLog.log('API_ERROR', { service: 'weather', error: error.message });
         console.error('Error fetching weather data:', error);
         throw error;
     }
 };
 
 /**
- * Get marine/ocean data for beach activities
+ * Get marine/ocean data for beach activities with security measures
  * @param {number} latitude 
  * @param {number} longitude 
  * @returns {Promise<Object>} Marine data
  */
 export const getMarineData = async (latitude, longitude) => {
+    // Rate limit check (shares with weather limiter)
+    const limitCheck = weatherRateLimiter.checkLimit();
+    if (!limitCheck.allowed) {
+        securityLog.log('RATE_LIMIT_EXCEEDED', {
+            service: 'marine',
+            waitTime: limitCheck.waitTime
+        });
+        throw new Error(`Terlalu banyak permintaan. Tunggu ${limitCheck.waitTime} detik.`);
+    }
+
+    // Validate coordinates
+    const coordValidation = validateCoordinates(latitude, longitude);
+    if (!coordValidation.isValid) {
+        securityLog.log('INVALID_COORDINATES', { latitude, longitude, reason: coordValidation.reason });
+        throw new Error(coordValidation.reason);
+    }
+
     try {
         const response = await axios.get('https://marine-api.open-meteo.com/v1/marine', {
             params: {
@@ -85,11 +127,14 @@ export const getMarineData = async (latitude, longitude) => {
                 ].join(','),
                 timezone: 'Asia/Jakarta',
                 forecast_days: 3
-            }
+            },
+            timeout: 10000 // 10 second timeout for security
         });
 
+        securityLog.log('API_SUCCESS', { service: 'marine' });
         return response.data;
     } catch (error) {
+        securityLog.log('API_ERROR', { service: 'marine', error: error.message });
         console.error('Error fetching marine data:', error);
         throw error;
     }

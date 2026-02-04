@@ -62,7 +62,12 @@ function App() {
       localStorage.setItem('ramadhanplan_location', JSON.stringify(newLocation));
     } catch {
       // If GPS request fails or is denied, default to Jakarta
-      const jakarta = INDONESIAN_CITIES[0];
+      const jakartaCity = INDONESIAN_CITIES[0];
+      const jakarta = {
+        name: jakartaCity.name,
+        latitude: jakartaCity.lat,
+        longitude: jakartaCity.lon
+      };
       setLocation(jakarta);
       localStorage.setItem('ramadhanplan_location', JSON.stringify(jakarta));
     }
@@ -74,7 +79,12 @@ function App() {
     setLocationDecided(true);
 
     // Default to Jakarta
-    const jakarta = INDONESIAN_CITIES[0];
+    const jakartaCity = INDONESIAN_CITIES[0];
+    const jakarta = {
+      name: jakartaCity.name,
+      latitude: jakartaCity.lat,
+      longitude: jakartaCity.lon
+    };
     setLocation(jakarta);
     localStorage.setItem('ramadhanplan_location', JSON.stringify(jakarta));
   };

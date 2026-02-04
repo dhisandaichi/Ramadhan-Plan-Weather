@@ -1,9 +1,14 @@
 import axios from 'axios';
+import {
+    prayerRateLimiter,
+    validateCoordinates,
+    securityLog
+} from '../utils/security';
 
 const ALADHAN_BASE = 'https://api.aladhan.com/v1';
 
 /**
- * Get prayer times for a specific location and date
+ * Get prayer times for a specific location and date with security measures
  * @param {number} latitude 
  * @param {number} longitude 
  * @param {Date} date - defaults to today
@@ -11,6 +16,23 @@ const ALADHAN_BASE = 'https://api.aladhan.com/v1';
  * @returns {Promise<object>} Prayer times data
  */
 export const getPrayerTimes = async (latitude, longitude, date = new Date(), method = 20) => {
+    // Rate limit check (2 RPS max)
+    const limitCheck = prayerRateLimiter.checkLimit();
+    if (!limitCheck.allowed) {
+        securityLog.log('RATE_LIMIT_EXCEEDED', {
+            service: 'prayer',
+            waitTime: limitCheck.waitTime
+        });
+        throw new Error(`Terlalu banyak permintaan. Tunggu ${limitCheck.waitTime} detik.`);
+    }
+
+    // Validate coordinates
+    const coordValidation = validateCoordinates(latitude, longitude);
+    if (!coordValidation.isValid) {
+        securityLog.log('INVALID_COORDINATES', { latitude, longitude, reason: coordValidation.reason });
+        throw new Error(coordValidation.reason);
+    }
+
     const dateStr = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
 
     try {
@@ -21,11 +43,13 @@ export const getPrayerTimes = async (latitude, longitude, date = new Date(), met
                 method, // 20 = Kementerian Agama Indonesia
                 tune: '2,2,2,2,2,2,2,2,2', // Fine-tuning in minutes
                 school: 0, // Standard (Shafi)
-            }
+            },
+            timeout: 10000 // 10 second timeout for security
         });
 
         if (response.data.code === 200) {
             const data = response.data.data;
+            securityLog.log('API_SUCCESS', { service: 'prayer' });
             return {
                 timings: {
                     imsak: data.timings.Imsak,
@@ -70,6 +94,7 @@ export const getPrayerTimes = async (latitude, longitude, date = new Date(), met
         }
         throw new Error('Failed to fetch prayer times');
     } catch (error) {
+        securityLog.log('API_ERROR', { service: 'prayer', error: error.message });
         console.error('Prayer times API error:', error);
         throw error;
     }
