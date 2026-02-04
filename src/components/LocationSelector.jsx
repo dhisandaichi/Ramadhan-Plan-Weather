@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { MdLocationOn, MdSearch, MdMyLocation } from 'react-icons/md';
+import { MdLocationOn, MdSearch, MdMyLocation, MdMap } from 'react-icons/md';
 import { INDONESIAN_CITIES, getCurrentLocation } from '../services/weatherService';
+import MapLocationPicker from './MapLocationPicker';
 
 const LocationSelector = ({ currentLocation, onLocationChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [showMapPicker, setShowMapPicker] = useState(false);
 
     const filteredCities = INDONESIAN_CITIES.filter(city =>
         city.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -33,6 +35,22 @@ const LocationSelector = ({ currentLocation, onLocationChange }) => {
         } catch {
             alert('Gagal mendapatkan lokasi Anda. Pastikan GPS aktif dan izin lokasi diberikan.');
         }
+    };
+
+    const handleMapLocationSelect = (location) => {
+        onLocationChange({
+            name: location.name,
+            latitude: location.latitude,
+            longitude: location.longitude,
+            fullAddress: location.fullAddress,
+            details: location.details
+        });
+        setIsOpen(false);
+    };
+
+    const handleOpenMapPicker = () => {
+        setIsOpen(false);
+        setShowMapPicker(true);
     };
 
     return (
@@ -92,6 +110,18 @@ const LocationSelector = ({ currentLocation, onLocationChange }) => {
                             </div>
                         </button>
 
+                        {/* Pick from Map */}
+                        <button
+                            onClick={handleOpenMapPicker}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary-900/30 transition-all border-b border-white/10 bg-gradient-to-r from-primary-900/20 to-transparent"
+                        >
+                            <MdMap className="text-2xl text-gold-400" />
+                            <div className="text-left">
+                                <div className="font-semibold">Pilih dari Peta</div>
+                                <div className="text-xs text-white/60">Geser pinpoint di OpenStreetMap</div>
+                            </div>
+                        </button>
+
                         {/* City List */}
                         <div className="max-h-96 overflow-y-auto">
                             {filteredCities.length > 0 ? (
@@ -121,8 +151,17 @@ const LocationSelector = ({ currentLocation, onLocationChange }) => {
                     </div>
                 </>
             )}
+
+            {/* Map Location Picker Modal */}
+            <MapLocationPicker
+                isOpen={showMapPicker}
+                onClose={() => setShowMapPicker(false)}
+                onSelectLocation={handleMapLocationSelect}
+                initialPosition={currentLocation ? [currentLocation.latitude, currentLocation.longitude] : [-6.248770, 106.869164]}
+            />
         </div>
     );
 };
 
 export default LocationSelector;
+
