@@ -1,8 +1,8 @@
 # 🌙 RamadhanPlan
 
-> **Cuaca Bukan Sekadar Angka, Tapi Rencana**
+> **Planner Ibadah Ramadhan Berbasis Sains**
 
-Sistem Pendukung Keputusan Berbasis Cuaca dan Data Geospasial untuk Perencanaan Aktivitas Harian dan Gizi Ramadhan di Indonesia.
+Sistem Perencana Ibadah yang mengoptimalkan aktivitas Ramadhan Anda (Sahur, Ibadah, Iftar) berdasarkan kondisi cuaca real-time dan data geospasial. Fokus pada kesehatan fisik (hidrasi) dan kelancaran ibadah.
 
 ![RamadhanPlan Banner](https://img.shields.io/badge/Version-1.0.0-blue) ![React](https://img.shields.io/badge/React-v18-61DAFB?logo=react) ![Tailwind](https://img.shields.io/badge/Tailwind-v3-38B2AC?logo=tailwind-css) ![License](https://img.shields.io/badge/License-MIT-green)
 
@@ -37,11 +37,11 @@ Sistem Pendukung Keputusan Berbasis Cuaca dan Data Geospasial untuk Perencanaan 
 Di Indonesia, kondisi cuaca sangat mempengaruhi aktivitas harian, terutama saat bulan Ramadhan:
 - **Cuaca panas** → Dehidrasi → Pilihan menu sahur harus tinggi air
 - **Hujan** → Banjir → Perencanaan perjalanan terganggu
-- **Ombak tinggi** → Wisata bahari berbahaya
+- **Panas terik** → Ngabuburit tidak nyaman
 
 Aplikasi ini menjawab pertanyaan seperti:
 > *"Cuaca hari ini **32°C**, lalu aku harus minum **berapa liter** saat sahur?"*  
-> *"Ombak **1.5 meter**, boleh snorkeling **gak**?"*  
+> *"Cuaca sore ini gimana, **cocok gak** buat ngabuburit ke taman?"*  
 > *"Kelembaban **80%**, **bisa kering gak** kalau nyuci?"*
 
 ---
@@ -50,17 +50,14 @@ Aplikasi ini menjawab pertanyaan seperti:
 
 ### 🏠 Tab Harian (Daily Life)
 
-#### 1. **Indeks Jemuran (Smart Laundry Index)**
-- Menghitung skor jemuran (0-100) berdasarkan:
-  - Suhu, Kelembaban, Kecepatan Angin, Curah Hujan, Tutupan Awan
-- Status: **Sempurna** / **Cukup Baik** / **Jangan Cuci**
-- Estimasi waktu kering pakaian
-
-```javascript
-// Contoh Algoritma
-if (humidity > 80 || precipitation > 50%) → "JANGAN CUCI"
-if (temp 25-35°C && wind 10-20 km/h) → "SEMPURNA"
-```
+#### 1. **Perencana Hidrasi Cerdas**
+- 💧 **Pola Minum Standar 2-4-2**:
+  - 2 Gelas saat Sahur
+  - 4 Gelas saat Buka
+  - 2 Gelas saat Malam
+- 🔥 **Adaptasi Cuaca Ekstrem**:
+  - Otomatis menyesuaikan menjadi pola 3-3-4 atau sejenisnya saat Heat Index tinggi.
+  - Menghitung total kebutuhan air berdasarkan berat badan dan cuaca.
 
 #### 2. **Siap Jalan** (🚧 Coming Soon)
 - Prediksi hujan per rute perjalanan motor
@@ -109,26 +106,27 @@ Features:
 
 ---
 
-### 🌊 Tab Bahari (Marine Activity)
+### 🌅 Tab Ngabuburit
 
-#### 1. **Snorkeling Safety Index**
-Menghitung skor keamanan (0-100) berdasarkan:
-- Tinggi ombak (Wave Height)
-- Kecepatan angin
-- Tutupan awan (visibilitas)
-- Probabilitas hujan
+#### 1. **Planner Ngabuburit**
+Rencanakan aktivitas sore menjelang berbuka berdasarkan kondisi cuaca:
 
-**Status:**
-- **80-100**: EXCELLENT (kondisi sempurna)
-- **60-79**: GOOD (aman untuk pemula)
-- **40-59**: MODERATE (hanya berpengalaman)
-- **0-39**: DANGEROUS (CANCEL aktivitas)
+**Aktivitas yang Didukung:**
+- 🚶 **Jalan-Jalan** - Skor kelayakan berdasarkan heat index dan probabilitas hujan
+- 🍹 **Berburu Takjil** - Rekomendasi waktu terbaik dan tips cuaca
+- 🌳 **Taman/Alun-Alun** - Analisis kenyamanan outdoor
+- 🍽️ **Buka Bersama** - Prediksi cuaca saat berbuka
 
-#### 2. **Rekomendasi Aktivitas Lain**
-- 🏊 Berenang
-- 🏄 Surfing (berdasarkan tinggi ombak)
-- 🚶 Jalan di pantai
-- 🎣 Memancing
+**Status Skor:**
+- **80-100**: SANGAT COCOK (cuaca sempurna)
+- **60-79**: CUKUP NYAMAN (aman untuk aktivitas)
+- **40-59**: KURANG IDEAL (perlu persiapan)
+- **0-39**: TIDAK DISARANKAN (tunda aktivitas)
+
+#### 2. **Fitur Ramadhan-Centric**
+- 🕐 **Waktu Terbaik Ngabuburit** (berdasarkan heat index)
+- 🎒 **Checklist Barang** per aktivitas
+- 🌙 **Reminder Ramadhan** (tips spiritual per aktivitas)
 
 ---
 
@@ -191,7 +189,7 @@ ramadhanplan/
 │   │   ├── LaundryIndex.jsx
 │   │   ├── SahurPlanner.jsx
 │   │   ├── IftarPlanner.jsx
-│   │   └── MarineActivity.jsx
+│   │   └── NgabuburitPlanner.jsx
 │   ├── services/
 │   │   └── weatherService.js  # API integrations
 │   ├── utils/
@@ -229,14 +227,6 @@ GET https://api.open-meteo.com/v1/forecast?
 - `hourly`: Per jam (24 jam ke depan)
 - `daily`: Harian (7 hari ke depan)
 - `timezone`: **Asia/Jakarta** (WIB)
-
-**Endpoint Maritim:**
-```javascript
-GET https://marine-api.open-meteo.com/v1/marine?
-  latitude=-8.65&
-  longitude=115.22&
-  current=wave_height,wave_direction
-```
 
 ### Algoritma Kunci
 

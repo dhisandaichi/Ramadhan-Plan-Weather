@@ -1,21 +1,20 @@
 import { useState } from 'react';
-import { MdBeachAccess, MdTerrain, MdDirectionsCar, MdRestaurant, MdGroups } from 'react-icons/md';
-import { WiDaySunny, WiRain, WiCloudy, WiStrongWind } from 'react-icons/wi';
+import { MdBeachAccess, MdTerrain, MdDirectionsCar, MdGroups, MdCoffee } from 'react-icons/md';
 import { calculateHeatIndex } from '../utils/calculators';
 
-const TourismPlanner = ({ weatherData, marineData }) => {
-    const [selectedActivity, setSelectedActivity] = useState('pantai');
+const NgabuburitPlanner = ({ weatherData, marineData }) => {
+    const [selectedActivity, setSelectedActivity] = useState('jalan');
 
     if (!weatherData?.current) return null;
 
     const current = weatherData.current;
     const heatIndex = calculateHeatIndex(current.temperature_2m, current.relative_humidity_2m);
 
-    // Activity options
+    // Activity options - focused on Ngabuburit activities
     const activities = [
-        { id: 'pantai', name: 'Pantai', icon: <MdBeachAccess />, emoji: '🏖️' },
-        { id: 'gunung', name: 'Gunung', icon: <MdTerrain />, emoji: '🏔️' },
-        { id: 'mobilitas', name: 'Mobilitas', icon: <MdDirectionsCar />, emoji: '🚗' },
+        { id: 'jalan', name: 'Jalan-Jalan', icon: <MdDirectionsCar />, emoji: '🚶' },
+        { id: 'kuliner', name: 'Berburu Takjil', icon: <MdCoffee />, emoji: '🍹' },
+        { id: 'taman', name: 'Taman/Alun-Alun', icon: <MdTerrain />, emoji: '🌳' },
         { id: 'bukber', name: 'Buka Bersama', icon: <MdGroups />, emoji: '🍽️' },
     ];
 
@@ -25,74 +24,74 @@ const TourismPlanner = ({ weatherData, marineData }) => {
         const precipitation = weatherData.hourly?.precipitation_probability[new Date().getHours()] || 0;
         const wind = current.wind_speed_10m;
         const cloudCover = current.cloud_cover;
-        const waveHeight = marineData?.current?.wave_height || 0.5;
 
         let score = 100;
         let tips = [];
         let status = '';
 
         switch (activityId) {
-            case 'pantai':
-                // Beach/marine activity scoring
-                if (waveHeight > 2.0) { score -= 40; tips.push('Ombak tinggi, berbahaya untuk berenang'); }
-                else if (waveHeight > 1.5) { score -= 25; tips.push('Ombak sedang, hati-hati berenang'); }
+            case 'jalan':
+                // Jalan-jalan/strolling scoring (afternoon before iftar)
+                if (precipitation > 50) { score -= 35; tips.push('Kemungkinan hujan tinggi, siapkan payung'); }
+                else if (precipitation > 30) { score -= 15; tips.push('Kemungkinan gerimis, bawa payung lipat'); }
 
-                if (precipitation > 50) { score -= 30; tips.push('Kemungkinan hujan tinggi'); }
-                else if (precipitation > 30) { score -= 15; tips.push('Siapkan payung untuk jaga-jaga'); }
+                if (heatIndex > 35) { score -= 25; tips.push('Cuaca sangat panas, tunggu menjelang Maghrib'); }
+                else if (heatIndex > 32) { score -= 15; tips.push('Masih panas, hindari jalan kaki terlalu lama'); }
+                else if (heatIndex < 28) { score += 10; tips.push('Cuaca sejuk, cocok untuk jalan kaki santai'); }
 
-                if (wind > 30) { score -= 20; tips.push('Angin kencang, hati-hati aktivitas air'); }
+                if (wind > 30) { score -= 15; tips.push('Angin cukup kencang'); }
 
-                if (heatIndex > 35) { score -= 15; tips.push('Cuaca sangat panas, pakai sunscreen SPF 50+'); }
-                else if (heatIndex > 30) { tips.push('Cuaca panas, bawa banyak air minum'); }
+                if (cloudCover > 70) { score += 5; tips.push('Mendung, tidak terlalu terik'); }
 
-                if (cloudCover < 30) { score += 10; tips.push('Langit cerah, cocok untuk snorkeling!'); }
-
-                if (score >= 75) status = 'SEMPURNA';
-                else if (score >= 50) status = 'CUKUP BAIK';
+                if (score >= 75) status = 'SANGAT COCOK';
+                else if (score >= 50) status = 'CUKUP NYAMAN';
                 else if (score >= 30) status = 'KURANG IDEAL';
                 else status = 'TIDAK DISARANKAN';
                 break;
 
-            case 'gunung':
-                // Mountain/hiking scoring
-                if (precipitation > 50) { score -= 40; tips.push('Hujan tinggi, jalur licin berbahaya'); }
-                else if (precipitation > 30) { score -= 20; tips.push('Kemungkinan hujan, bawa jas hujan'); }
+            case 'kuliner':
+                // Berburu takjil scoring
+                if (precipitation > 60) { score -= 40; tips.push('Hujan deras, pilih takjil drive-thru atau pesan online'); }
+                else if (precipitation > 30) { score -= 20; tips.push('Kemungkinan hujan, pilih tempat takjil indoor'); }
 
-                if (wind > 40) { score -= 30; tips.push('Angin sangat kencang di puncak'); }
-                else if (wind > 25) { score -= 15; tips.push('Angin kencang, bawa jaket windbreaker'); }
+                if (heatIndex > 34) { score -= 15; tips.push('Cuaca panas, beli es buah atau es kelapa muda!'); }
+                else if (heatIndex < 28) { score += 10; tips.push('Cuaca sejuk, cocok beli gorengan hangat'); }
 
-                if (temp < 15) { tips.push('Suhu dingin, bawa pakaian tebal'); }
-                else if (temp > 30) { score -= 10; tips.push('Cuaca panas, bawa air ekstra'); }
+                if (wind > 25) { score -= 10; tips.push('Angin kencang, hati-hati bawa makanan'); }
 
-                if (cloudCover > 80) { score -= 10; tips.push('Mendung tebal, view mungkin tertutup'); }
-                else if (cloudCover < 30) { score += 10; tips.push('Langit cerah, view akan bagus!'); }
+                // Check weather around 5-6 PM (peak takjil time)
+                const takjilHour = 17;
+                const takjilPrecip = weatherData.hourly?.precipitation_probability[takjilHour] || 0;
+                if (takjilPrecip > 50) { score -= 15; tips.push('Prediksi hujan jam 5 sore, berangkat lebih awal'); }
 
-                if (score >= 75) status = 'SEMPURNA';
-                else if (score >= 50) status = 'CUKUP BAIK';
-                else if (score >= 30) status = 'PERLU PERSIAPAN EKSTRA';
-                else status = 'TUNDA PENDAKIAN';
+                if (score >= 80) status = 'WAKTU IDEAL BERBURU';
+                else if (score >= 60) status = 'COCOK';
+                else if (score >= 40) status = 'PERLU PERSIAPAN';
+                else status = 'PESAN ONLINE SAJA';
                 break;
 
-            case 'mobilitas':
-                // Travel/mobility scoring
-                if (precipitation > 60) { score -= 35; tips.push('Hujan lebat, hati-hati berkendara'); }
-                else if (precipitation > 30) { score -= 15; tips.push('Kemungkinan hujan, waspadai genangan'); }
+            case 'taman':
+                // Taman/Alun-alun scoring
+                if (precipitation > 50) { score -= 40; tips.push('Risiko hujan tinggi, tidak cocok ke taman'); }
+                else if (precipitation > 30) { score -= 20; tips.push('Kemungkinan hujan, bawa payung'); }
 
-                if (wind > 50) { score -= 25; tips.push('Angin kencang berbahaya untuk motor'); }
+                if (heatIndex > 35) { score -= 30; tips.push('Masih sangat panas, tunggu menjelang Maghrib'); }
+                else if (heatIndex > 32) { score -= 15; tips.push('Cuaca masih panas, cari spot teduh'); }
+                else if (heatIndex < 28) { score += 15; tips.push('Cuaca sejuk, sempurna untuk ngabuburit di taman!'); }
 
-                if (cloudCover > 90) { score -= 5; tips.push('Mendung gelap, nyalakan lampu'); }
+                if (wind > 35) { score -= 15; tips.push('Angin kencang, hati-hati dekat pohon besar'); }
 
-                if (heatIndex > 35) { score -= 10; tips.push('AC mobil ON, hindari motor siang'); }
+                if (cloudCover > 60 && precipitation < 30) { score += 10; tips.push('Mendung tapi tidak hujan, sejuk!'); }
 
-                if (score >= 80) status = 'LANCAR';
-                else if (score >= 60) status = 'NORMAL';
-                else if (score >= 40) status = 'WASPADA';
-                else status = 'TUNDA PERJALANAN';
+                if (score >= 75) status = 'SEMPURNA';
+                else if (score >= 50) status = 'CUKUP NYAMAN';
+                else if (score >= 30) status = 'KURANG IDEAL';
+                else status = 'TIDAK DISARANKAN';
                 break;
 
             case 'bukber': {
                 // Buka bersama / outdoor dining scoring
-                if (precipitation > 40) { score -= 30; tips.push('Risiko hujan, pilih tempat indoor'); }
+                if (precipitation > 40) { score -= 30; tips.push('Risiko hujan, pilih tempat bukber indoor'); }
 
                 if (heatIndex > 33) { score -= 15; tips.push('Cuaca panas, pilih tempat ber-AC'); }
                 else if (heatIndex < 26) { score += 10; tips.push('Cuaca sejuk, outdoor dining nyaman!'); }
@@ -103,6 +102,7 @@ const TourismPlanner = ({ weatherData, marineData }) => {
                 const iftarHour = 18;
                 const eveningPrecip = weatherData.hourly?.precipitation_probability[iftarHour] || 0;
                 if (eveningPrecip > 50) { score -= 20; tips.push('Prediksi hujan saat berbuka'); }
+                else if (eveningPrecip < 20) { score += 5; tips.push('Cuaca cerah saat berbuka, outdoor aman'); }
 
                 if (score >= 80) status = 'SANGAT COCOK';
                 else if (score >= 60) status = 'COCOK';
@@ -133,8 +133,11 @@ const TourismPlanner = ({ weatherData, marineData }) => {
             {/* Activity Selector */}
             <div className="card-premium">
                 <h2 className="text-2xl font-bold font-display mb-4 gradient-text">
-                    🗺️ Planner Wisata
+                    🌙 Planner Ngabuburit
                 </h2>
+                <p className="text-white/60 text-sm mb-4">
+                    Rencanakan aktivitas sore menjelang berbuka berdasarkan kondisi cuaca
+                </p>
 
                 <div className="grid grid-cols-4 gap-2 mb-4">
                     {activities.map((activity) => (
@@ -172,7 +175,7 @@ const TourismPlanner = ({ weatherData, marineData }) => {
                         {currentActivity.status}
                     </div>
                     <div className="text-sm text-white/60">
-                        Skor Kelayakan Wisata
+                        Skor Kelayakan Ngabuburit
                     </div>
                 </div>
             </div>
@@ -203,38 +206,34 @@ const TourismPlanner = ({ weatherData, marineData }) => {
                     </div>
                 </div>
 
-                {marineData?.current && selectedActivity === 'pantai' && (
-                    <div className="mt-3 glass-dark rounded-xl p-3">
-                        <div className="flex items-center justify-between">
-                            <span className="text-white/70">🌊 Tinggi Ombak:</span>
-                            <span className={`font-bold ${marineData.current.wave_height > 1.5 ? 'text-red-400' :
-                                marineData.current.wave_height > 1.0 ? 'text-yellow-400' :
-                                    'text-primary-400'
-                                }`}>
-                                {marineData.current.wave_height}m
-                            </span>
-                        </div>
+                {/* Time suggestion */}
+                <div className="mt-3 glass-dark rounded-xl p-3">
+                    <div className="flex items-center justify-between">
+                        <span className="text-white/70">⏰ Waktu terbaik ngabuburit:</span>
+                        <span className="font-bold text-gold-300">
+                            {heatIndex > 32 ? '16:30 - 18:00' : '15:30 - 18:00'}
+                        </span>
                     </div>
-                )}
+                </div>
             </div>
 
             {/* Tips & Recommendations */}
             <div className="card-premium">
-                <h3 className="font-bold text-lg mb-3">💡 Tips & Rekomendasi</h3>
+                <h3 className="font-bold text-lg mb-3">💡 Tips Ngabuburit</h3>
                 <div className="space-y-2">
                     {currentActivity.tips.length > 0 ? (
                         currentActivity.tips.map((tip, index) => (
                             <div key={index} className="glass-dark rounded-xl p-3 flex items-start gap-3">
                                 <span className="text-lg">
-                                    {tip.includes('berbahaya') || tip.includes('tinggi') ? '⚠️' :
-                                        tip.includes('cocok') || tip.includes('bagus') ? '✅' : 'ℹ️'}
+                                    {tip.includes('tidak') || tip.includes('deras') ? '⚠️' :
+                                        tip.includes('cocok') || tip.includes('sempurna') || tip.includes('ideal') ? '✅' : 'ℹ️'}
                                 </span>
                                 <span className="text-sm text-white/80">{tip}</span>
                             </div>
                         ))
                     ) : (
                         <div className="glass-dark rounded-xl p-3 text-center text-primary-300">
-                            ✅ Kondisi cuaca ideal untuk aktivitas ini!
+                            ✅ Cuaca sempurna untuk ngabuburit!
                         </div>
                     )}
                 </div>
@@ -243,30 +242,36 @@ const TourismPlanner = ({ weatherData, marineData }) => {
                 <div className="mt-4 glass-dark rounded-xl p-4">
                     <div className="font-semibold text-gold-300 mb-2">🎒 Barang yang Perlu Dibawa:</div>
                     <div className="flex flex-wrap gap-2">
-                        {selectedActivity === 'pantai' && (
+                        {selectedActivity === 'jalan' && (
                             <>
-                                <span className="badge-info">Sunscreen</span>
-                                <span className="badge-info">Kacamata</span>
-                                <span className="badge-info">Sandal</span>
-                                <span className="badge-info">Air Minum</span>
-                                {current.cloud_cover < 50 && <span className="badge-warning">Payung</span>}
-                            </>
-                        )}
-                        {selectedActivity === 'gunung' && (
-                            <>
-                                <span className="badge-info">Jaket</span>
-                                <span className="badge-info">Sepatu Hiking</span>
-                                <span className="badge-info">Air 2L+</span>
-                                <span className="badge-info">Snack</span>
-                                <span className="badge-warning">Jas Hujan</span>
-                            </>
-                        )}
-                        {selectedActivity === 'mobilitas' && (
-                            <>
-                                <span className="badge-info">Charger HP</span>
                                 <span className="badge-info">Dompet</span>
+                                <span className="badge-info">HP</span>
+                                <span className="badge-info">Air Minum</span>
+                                {heatIndex > 30 && <span className="badge-warning">Kipas Lipat</span>}
                                 {weatherData.hourly?.precipitation_probability[new Date().getHours()] > 30 && (
-                                    <span className="badge-warning">Jas Hujan</span>
+                                    <span className="badge-warning">Payung</span>
+                                )}
+                            </>
+                        )}
+                        {selectedActivity === 'kuliner' && (
+                            <>
+                                <span className="badge-info">Dompet/E-Wallet</span>
+                                <span className="badge-info">Kantong Plastik</span>
+                                <span className="badge-info">Hand Sanitizer</span>
+                                <span className="badge-gold">Dus Makanan</span>
+                                {weatherData.hourly?.precipitation_probability[new Date().getHours()] > 30 && (
+                                    <span className="badge-warning">Payung</span>
+                                )}
+                            </>
+                        )}
+                        {selectedActivity === 'taman' && (
+                            <>
+                                <span className="badge-info">Tikar</span>
+                                <span className="badge-info">Snack/Takjil</span>
+                                <span className="badge-info">Air Minum</span>
+                                <span className="badge-info">Speaker Kecil</span>
+                                {weatherData.hourly?.precipitation_probability[new Date().getHours()] > 30 && (
+                                    <span className="badge-warning">Payung</span>
                                 )}
                             </>
                         )}
@@ -280,9 +285,29 @@ const TourismPlanner = ({ weatherData, marineData }) => {
                         )}
                     </div>
                 </div>
+
+                {/* Ramadhan Reminder */}
+                <div className="mt-4 glass-dark rounded-xl p-4 border border-gold-500/30">
+                    <div className="flex items-start gap-3">
+                        <span className="text-2xl">🌙</span>
+                        <div>
+                            <div className="font-semibold text-gold-300">Reminder Ramadhan</div>
+                            <p className="text-sm text-white/70 mt-1">
+                                {selectedActivity === 'kuliner'
+                                    ? 'Berburu takjil adalah tradisi yang penuh berkah. Jangan lupa berbagi dengan sesama!'
+                                    : selectedActivity === 'bukber'
+                                        ? 'Buka bersama adalah momen menjalin silaturahmi. Jangan berlebihan saat berbuka!'
+                                        : selectedActivity === 'taman'
+                                            ? 'Nikmati ngabuburit di taman dengan dzikir dan tadabur alam.'
+                                            : 'Manfaatkan waktu ngabuburit untuk refreshing sebelum berbuka dan Tarawih.'
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
 };
 
-export default TourismPlanner;
+export default NgabuburitPlanner;

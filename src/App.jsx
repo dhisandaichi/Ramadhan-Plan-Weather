@@ -12,14 +12,17 @@ import LocationSelector from './components/LocationSelector';
 import WeatherCard from './components/WeatherCard';
 import PrayerTimesCard from './components/PrayerTimesCard';
 import HydrationCard from './components/HydrationCard';
-import LaundryIndex from './components/LaundryIndex';
 import RainRadar from './components/RainRadar';
 import SahurPlanner from './components/SahurPlanner';
 import IftarPlanner from './components/IftarPlanner';
-import TourismPlanner from './components/TourismPlanner';
+import NgabuburitPlanner from './components/NgabuburitPlanner';
+import DoaExplorer from './components/DoaExplorer';
+import DailyIbadahPlanner from './components/DailyIbadahPlanner';
+import UpcomingIbadah from './components/UpcomingIbadah';
+import ImsakiyahCard from './components/ImsakiyahCard';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('harian');
+  const [activeTab, setActiveTab] = useState('ramadhan');
   const [location, setLocation] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
   const [marineData, setMarineData] = useState(null);
@@ -155,9 +158,9 @@ function App() {
   }
 
   const tabs = [
-    { id: 'harian', name: 'Beranda', icon: <MdHome />, emoji: '🏠' },
     { id: 'ramadhan', name: 'Ramadhan', icon: <FaMosque />, emoji: '🌙' },
-    { id: 'wisata', name: 'Wisata', icon: <MdExplore />, emoji: '🗺️' },
+    { id: 'harian', name: 'Beranda', icon: <MdHome />, emoji: '🏠' },
+    { id: 'ngabuburit', name: 'Ngabuburit', icon: <MdExplore />, emoji: '🌅' },
   ];
 
   return (
@@ -189,6 +192,9 @@ function App() {
         {/* Tab Content */}
         {activeTab === 'harian' && (
           <div className="space-y-6 animate-fade-in">
+            {/* 0. Agenda 1 Jam Ke Depan */}
+            <UpcomingIbadah />
+
             {/* 1. Shalat Berikutnya (Prayer Times Card) */}
             <PrayerTimesCard
               latitude={location.latitude}
@@ -201,28 +207,26 @@ function App() {
 
             {/* 3. Siap Jalan (Rain Radar) */}
             <RainRadar weatherData={weatherData} />
-
-            {/* 4. Indeks Jemuran */}
-            <LaundryIndex weatherData={weatherData} />
           </div>
         )}
 
         {activeTab === 'ramadhan' && (
           <div className="space-y-6 animate-fade-in">
-            {/* Prayer Times also on Ramadhan tab */}
-            <PrayerTimesCard
-              latitude={location.latitude}
-              longitude={location.longitude}
-              cityName={location.name}
-            />
+            {/* Imsakiyah Schedule */}
+            <ImsakiyahCard locationName={location.name} />
+            {/* Daily Ibadah Planner */}
+            <DailyIbadahPlanner />
+            {/* Doa & Dzikir Explorer */}
+            <DoaExplorer />
+            {/* Sahur & Iftar Planners */}
             <SahurPlanner weatherData={weatherData} />
             <IftarPlanner weatherData={weatherData} />
           </div>
         )}
 
-        {activeTab === 'wisata' && (
+        {activeTab === 'ngabuburit' && (
           <div className="animate-fade-in">
-            <TourismPlanner weatherData={weatherData} marineData={marineData} />
+            <NgabuburitPlanner weatherData={weatherData} marineData={marineData} />
           </div>
         )}
       </main>
@@ -254,7 +258,7 @@ function App() {
       {/* Footer - Data Sources */}
       <footer className="max-w-4xl mx-auto px-4 py-4 mb-20">
         <div className="text-center text-xs text-white/30">
-          <p>Data cuaca dari Open-Meteo | Jadwal shalat dari Aladhan</p>
+          <p>Cuaca: Open-Meteo | Shalat: Aladhan | Imsakiyah & Doa: EQuran.id | Hadits: Gading.dev</p>
           <p className="mt-1">© 2026 RamadhanPlan - Made with ❤️ for Indonesia</p>
         </div>
       </footer>

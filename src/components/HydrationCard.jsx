@@ -8,11 +8,8 @@ const HydrationCard = ({ weatherData, bodyWeight = 70 }) => {
     const heatIndex = calculateHeatIndex(current.temperature_2m, current.relative_humidity_2m);
     const hydration = calculateHydrationNeeds(heatIndex, bodyWeight, true);
 
-    // Convert ml to glasses (1 glass = 250ml)
+    // Convert ml to glasses (approx) for total display
     const totalGlasses = Math.round(hydration.totalNeeded / 250);
-    const sahurGlasses = Math.round(hydration.sahurAmount / 250);
-    const iftarGlasses = Math.round(hydration.iftarAmount / 250);
-    const nightGlasses = Math.round(hydration.nightAmount / 250);
 
     // Determine urgency level
     const isExtreme = heatIndex > 32;
@@ -38,39 +35,42 @@ const HydrationCard = ({ weatherData, bodyWeight = 70 }) => {
                 <div className="text-lg text-white/70">
                     ≈ {totalGlasses} gelas air
                 </div>
-                <div className={`text-sm mt-2 font-semibold ${isExtreme ? 'text-red-400' : isHigh ? 'text-yellow-400' : 'text-primary-400'}`}>
-                    {isExtreme ? '🔥 CUACA EKSTREM - Tingkatkan Hidrasi!' :
-                        isHigh ? '☀️ CUACA PANAS - Perbanyak Minum' :
-                            '✅ CUACA NORMAL - Hidrasi Standar'}
+                <div className="mt-2 bg-white/5 rounded-lg py-1 px-3 inline-block">
+                    <span className="text-sm font-mono text-primary-300">Pola: {hydration.pattern}</span>
+                </div>
+                <div className={`text-sm mt-3 font-semibold ${isExtreme ? 'text-red-400' : isHigh ? 'text-yellow-400' : 'text-primary-400'}`}>
+                    {isExtreme ? '🔥 CUACA EKSTREM - Pola Minum Ditingkatkan!' :
+                        isHigh ? '☀️ CUACA PANAS - Pola Minum Ekstra' :
+                            '✅ CUACA NORMAL - Pola Standar 2-4-2'}
                 </div>
             </div>
 
             {/* Distribution */}
             <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="glass-dark rounded-xl p-3 text-center">
+                <div className="glass-dark rounded-xl p-3 text-center border-t-4 border-primary-500/50">
                     <div className="text-2xl mb-1">🌙</div>
                     <div className="text-xs text-white/50 mb-1">Sahur</div>
-                    <div className="text-lg font-bold text-primary-300">{sahurGlasses} gelas</div>
-                    <div className="text-xs text-white/50">{hydration.sahurAmount}ml</div>
+                    <div className="text-xl font-bold text-white">{hydration.sahurGlasses}</div>
+                    <div className="text-[10px] text-white/40">Gelas</div>
                 </div>
-                <div className="glass-dark rounded-xl p-3 text-center">
+                <div className="glass-dark rounded-xl p-3 text-center border-t-4 border-gold-500/50">
                     <div className="text-2xl mb-1">🌅</div>
                     <div className="text-xs text-white/50 mb-1">Buka</div>
-                    <div className="text-lg font-bold text-gold-300">{iftarGlasses} gelas</div>
-                    <div className="text-xs text-white/50">{hydration.iftarAmount}ml</div>
+                    <div className="text-xl font-bold text-white">{hydration.iftarGlasses}</div>
+                    <div className="text-[10px] text-white/40">Gelas</div>
                 </div>
-                <div className="glass-dark rounded-xl p-3 text-center">
+                <div className="glass-dark rounded-xl p-3 text-center border-t-4 border-blue-500/50">
                     <div className="text-2xl mb-1">🌃</div>
                     <div className="text-xs text-white/50 mb-1">Malam</div>
-                    <div className="text-lg font-bold text-blue-300">{nightGlasses} gelas</div>
-                    <div className="text-xs text-white/50">{hydration.nightAmount}ml</div>
+                    <div className="text-xl font-bold text-white">{hydration.nightGlasses}</div>
+                    <div className="text-[10px] text-white/40">Gelas</div>
                 </div>
             </div>
 
             {/* Recommendation */}
             <div className={`rounded-xl p-3 text-sm ${isExtreme ? 'bg-red-500/20 border border-red-500/50 text-red-200' :
-                    isHigh ? 'bg-yellow-500/20 border border-yellow-500/50 text-yellow-200' :
-                        'bg-primary-500/20 border border-primary-500/50 text-primary-200'
+                isHigh ? 'bg-yellow-500/20 border border-yellow-500/50 text-yellow-200' :
+                    'bg-primary-500/20 border border-primary-500/50 text-primary-200'
                 }`}>
                 <div className="font-semibold mb-1">💡 Tips Hidrasi:</div>
                 <div>{hydration.recommendation}</div>

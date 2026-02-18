@@ -38,26 +38,88 @@ export const calculateHydrationNeeds = (heatIndex, bodyWeight = 70, isFasting = 
     // Base water need: 35ml per kg body weight
     let baseWater = bodyWeight * 35; // in ml
 
+    let pattern = "2-4-2";
+    let patternDesc = "2 Sahur - 4 Buka - 2 Malam";
+    let sahurG = 2;
+    let iftarG = 4;
+    let nightG = 2;
+
     // Adjust for heat
     if (heatIndex > 32) {
         baseWater *= 1.5; // +50% for extreme heat
+        // Change pattern for extreme heat (e.g., 3-5-4 or 4-4-4 to meet high intake)
+        // Let's aim for ~12 glasses or more if heavy
+        pattern = "3-5-4";
+        patternDesc = "3 Sahur - 5 Buka - 4 Malam";
+        sahurG = 3;
+        iftarG = 5;
+        nightG = 4;
     } else if (heatIndex > 28) {
         baseWater *= 1.3; // +30% for high heat
-    } else if (heatIndex > 24) {
-        baseWater *= 1.1; // +10% for moderate heat
+        // Change pattern for hot weather
+        pattern = "3-4-3";
+        patternDesc = "3 Sahur - 4 Buka - 3 Malam";
+        sahurG = 3;
+        iftarG = 4;
+        nightG = 3;
+    } else {
+        // Normal 2-4-2
+        pattern = "2-4-2";
+        patternDesc = "2 Sahur - 4 Buka - 2 Malam";
+        sahurG = 2;
+        iftarG = 4;
+        nightG = 2;
+    }
+
+    // Ensure accurate ml distribution based on glasses (approx 250ml per glass)
+    // or keep the strict ml calculation and just advise glasses? 
+    // The user wants the PATTERN. So we emphasize the pattern.
+
+    // Recalculate total glasses to match the ml needs roughly, or stick to the pattern?
+    // If baseWater is very high (heavy person), 2-4-2 (8 glasses = 2L) might not be enough.
+    // So we should scale the glasses if weight requires it, but keep the RATIO/Pattern philosophy.
+
+    const singleGlass = 250;
+    const totalGlassesNeeded = Math.ceil(baseWater / singleGlass);
+
+    // If calculated need is much higher than standard pattern, scale it up
+    // Standard 2-4-2 is 8 glasses (2L).
+    if (totalGlassesNeeded > 8) {
+        // Distribute extra glasses
+        const extra = totalGlassesNeeded - (sahurG + iftarG + nightG);
+        if (extra > 0) {
+            // Add to iftar and night mostly, maybe 1 to sahur
+            // Simple distribution logic
+            const addSahur = Math.floor(extra * 0.2);
+            const addIftar = Math.floor(extra * 0.4);
+            const addNight = extra - addSahur - addIftar;
+
+            sahurG += addSahur;
+            iftarG += addIftar;
+            nightG += addNight;
+
+            // Update pattern string
+            pattern = `${sahurG}-${iftarG}-${nightG}`;
+            patternDesc = `${sahurG} Sahur - ${iftarG} Buka - ${nightG} Malam`;
+        }
     }
 
     if (isFasting) {
         return {
             totalNeeded: Math.round(baseWater),
-            sahurAmount: Math.round(baseWater * 0.4), // 40% at sahur
-            iftarAmount: Math.round(baseWater * 0.3), // 30% at iftar
-            nightAmount: Math.round(baseWater * 0.3), // 30% before sleep
+            sahurAmount: sahurG * 250,
+            iftarAmount: iftarG * 250,
+            nightAmount: nightG * 250,
+            sahurGlasses: sahurG,
+            iftarGlasses: iftarG,
+            nightGlasses: nightG,
+            pattern: pattern,
+            patternDesc: patternDesc,
             recommendation: heatIndex > 32
-                ? 'CRITICAL: Cuaca sangat panas. Prioritaskan air putih dan hindari kafein.'
+                ? 'CRITICAL: Cuaca sangat panas. Gunakan pola minum agresif.'
                 : heatIndex > 28
-                    ? 'WARNING: Udara panas. Perbanyak minum saat sahur.'
-                    : 'NORMAL: Minum air secukupnya, konsumsi buah berair.'
+                    ? 'WARNING: Udara panas. Tingkatkan asupan air saat sahur.'
+                    : 'NORMAL: Gunakan pola standar 2-4-2.'
         };
     }
 
