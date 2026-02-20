@@ -157,7 +157,7 @@ const LocationSelector = ({ currentLocation, onLocationChange }) => {
                 isOpen={showMapPicker}
                 onClose={() => setShowMapPicker(false)}
                 onSelectLocation={handleMapLocationSelect}
-                initialPosition={currentLocation ? [currentLocation.latitude, currentLocation.longitude] : [-6.248770, 106.869164]}
+                initialPosition={currentLocation ? [parseFloat(currentLocation.latitude), parseFloat(currentLocation.longitude)] : [-6.248770, 106.869164]}
             />
         </div>
     );

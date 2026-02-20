@@ -42,7 +42,7 @@ const getNextPrayer = (schedule) => {
     return { key: 'imsak', label: 'Imsak Besok', emoji: '🌙', time: schedule.imsak, minutesLeft: null };
 };
 
-const ImsakiyahCard = ({ locationName }) => {
+const ImsakiyahCard = () => {
     const [provinsi, setProvinsi] = useState('');
     const [kabkota, setKabkota] = useState('');
     const [provinsiList, setProvinsiList] = useState([]);
@@ -99,7 +99,7 @@ const ImsakiyahCard = ({ locationName }) => {
             const today = data?.imsakiyah?.find(d => d.tanggal === ramadhanDay) || data?.imsakiyah?.[0];
             setTodaySchedule(today);
             setNextPrayer(getNextPrayer(today));
-        } catch (e) {
+        } catch (_err) {
             setError('Gagal mengambil jadwal imsakiyah. Coba lagi.');
         } finally {
             setLoading(false);

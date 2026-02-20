@@ -4,13 +4,11 @@ import { getNextHourActivities } from '../utils/ibadahData';
 import { MdAccessTime } from 'react-icons/md';
 
 const UpcomingIbadah = () => {
-    const [activities, setActivities] = useState([]);
+    // Lazy initializer avoids setState-in-effect for the initial load
+    const [activities, setActivities] = useState(() => getNextHourActivities());
 
     useEffect(() => {
-        // Initial load
-        setActivities(getNextHourActivities());
-
-        // Update every minute (to catch time changes)
+        // Update every minute to catch time changes
         const interval = setInterval(() => {
             setActivities(getNextHourActivities());
         }, 60000);
@@ -18,10 +16,8 @@ const UpcomingIbadah = () => {
         return () => clearInterval(interval);
     }, []);
 
-    // Also update on mount once
-    useEffect(() => {
-        setActivities(getNextHourActivities());
-    }, []);
+
+
 
     if (activities.length === 0) {
         return (

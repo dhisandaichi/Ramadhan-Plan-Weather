@@ -173,7 +173,7 @@ function App() {
               <div className="text-3xl">🌙</div>
               <div>
                 <h1 className="text-xl font-bold font-display gradient-text">RamadhanPlan</h1>
-                <p className="text-xs text-white/50">Cuaca Bukan Sekadar Angka</p>
+                <p className="text-xs text-white/50">Karena Beramal butuh Rencana</p>
               </div>
             </div>
             <LocationSelector

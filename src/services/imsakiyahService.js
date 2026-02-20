@@ -61,7 +61,6 @@ export const getTodayImsakiyah = async (provinsi, kabkota) => {
     if (!data || !data.imsakiyah) return null;
 
     const today = new Date();
-    const dayOfMonth = today.getDate();
 
     // Ramadhan 2026 starts around March 1, 2026 (1 Ramadhan 1447H)
     // The API returns 30 days of Ramadhan. tanggal = 1..30 (day of Ramadhan)

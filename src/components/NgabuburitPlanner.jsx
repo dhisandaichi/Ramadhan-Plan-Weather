@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { MdBeachAccess, MdTerrain, MdDirectionsCar, MdGroups, MdCoffee } from 'react-icons/md';
 import { calculateHeatIndex } from '../utils/calculators';
 
-const NgabuburitPlanner = ({ weatherData, marineData }) => {
+const NgabuburitPlanner = ({ weatherData }) => {
     const [selectedActivity, setSelectedActivity] = useState('jalan');
 
     if (!weatherData?.current) return null;
@@ -20,7 +20,6 @@ const NgabuburitPlanner = ({ weatherData, marineData }) => {
 
     // Calculate scores for each activity
     const calculateActivityScore = (activityId) => {
-        const temp = current.temperature_2m;
         const precipitation = weatherData.hourly?.precipitation_probability[new Date().getHours()] || 0;
         const wind = current.wind_speed_10m;
         const cloudCover = current.cloud_cover;
@@ -49,7 +48,7 @@ const NgabuburitPlanner = ({ weatherData, marineData }) => {
                 else status = 'TIDAK DISARANKAN';
                 break;
 
-            case 'kuliner':
+            case 'kuliner': {
                 // Berburu takjil scoring
                 if (precipitation > 60) { score -= 40; tips.push('Hujan deras, pilih takjil drive-thru atau pesan online'); }
                 else if (precipitation > 30) { score -= 20; tips.push('Kemungkinan hujan, pilih tempat takjil indoor'); }
@@ -69,6 +68,7 @@ const NgabuburitPlanner = ({ weatherData, marineData }) => {
                 else if (score >= 40) status = 'PERLU PERSIAPAN';
                 else status = 'PESAN ONLINE SAJA';
                 break;
+            }
 
             case 'taman':
                 // Taman/Alun-alun scoring

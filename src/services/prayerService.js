@@ -16,6 +16,10 @@ const ALADHAN_BASE = 'https://api.aladhan.com/v1';
  * @returns {Promise<object>} Prayer times data
  */
 export const getPrayerTimes = async (latitude, longitude, date = new Date(), method = 20) => {
+    // Ensure coordinates are numbers (may come as strings from localStorage)
+    const lat = parseFloat(latitude);
+    const lon = parseFloat(longitude);
+
     // Rate limit check (2 RPS max)
     const limitCheck = prayerRateLimiter.checkLimit();
     if (!limitCheck.allowed) {
@@ -27,9 +31,9 @@ export const getPrayerTimes = async (latitude, longitude, date = new Date(), met
     }
 
     // Validate coordinates
-    const coordValidation = validateCoordinates(latitude, longitude);
+    const coordValidation = validateCoordinates(lat, lon);
     if (!coordValidation.isValid) {
-        securityLog.log('INVALID_COORDINATES', { latitude, longitude, reason: coordValidation.reason });
+        securityLog.log('INVALID_COORDINATES', { lat, lon, reason: coordValidation.reason });
         throw new Error(coordValidation.reason);
     }
 
@@ -38,8 +42,8 @@ export const getPrayerTimes = async (latitude, longitude, date = new Date(), met
     try {
         const response = await axios.get(`${ALADHAN_BASE}/timings/${dateStr}`, {
             params: {
-                latitude,
-                longitude,
+                latitude: lat,
+                longitude: lon,
                 method, // 20 = Kementerian Agama Indonesia
                 tune: '2,2,2,2,2,2,2,2,2', // Fine-tuning in minutes
                 school: 0, // Standard (Shafi)

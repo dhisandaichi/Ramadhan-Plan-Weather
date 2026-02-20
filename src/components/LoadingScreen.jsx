@@ -40,7 +40,7 @@ const LoadingScreen = () => {
                     <h1 className="text-4xl font-bold gradient-text-gold font-display mb-2">
                         RamadhanPlan
                     </h1>
-                    <p className="text-white/70">Cuaca Bukan Sekadar Angka, Tapi Rencana</p>
+                    <p className="text-white/70">Karena Beramal butuh Rencana</p>
                 </div>
 
                 {/* Loading Text */}

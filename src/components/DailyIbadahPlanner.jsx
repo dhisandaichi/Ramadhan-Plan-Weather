@@ -1,18 +1,14 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { getMergedIbadahData } from '../utils/ibadahData';
 import HadithDisplay from './HadithDisplay';
 import QuranDisplay from './QuranDisplay';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 const DailyIbadahPlanner = () => {
-    const [ibadahList, setIbadahList] = useState([]);
-    const [expandedIds, setExpandedIds] = useState({});
-
-    useEffect(() => {
-        const data = getMergedIbadahData();
-        setIbadahList(data);
-    }, []);
+    const ibadahList = useMemo(() => getMergedIbadahData(), []);
+    const [expandedIds, setExpandedIds] = React.useState({});
+    const [visibleCount, setVisibleCount] = React.useState(7);
 
     const toggleExpand = (id) => {
         setExpandedIds(prev => ({
@@ -33,7 +29,7 @@ const DailyIbadahPlanner = () => {
                 </div>
 
                 <div className="space-y-4">
-                    {ibadahList.map((item, index) => {
+                    {ibadahList.slice(0, visibleCount).map((item) => {
                         const isExpanded = expandedIds[item.id];
                         const hasRef = item.api_path || item.quran_api_path;
 
@@ -92,6 +88,27 @@ const DailyIbadahPlanner = () => {
                             </div>
                         );
                     })}
+
+                    {/* Pagination / Load More Controls */}
+                    <div className="flex justify-center mt-6 gap-3">
+                        {visibleCount < ibadahList.length && (
+                            <button
+                                onClick={() => setVisibleCount(prev => Math.min(prev + 7, ibadahList.length))}
+                                className="btn-secondary px-6 py-2 rounded-full text-sm font-semibold hover:bg-white/10 transition-colors"
+                            >
+                                Tampilkan Lebih Banyak ({ibadahList.length - visibleCount} lagi)
+                            </button>
+                        )}
+
+                        {visibleCount > 7 && (
+                            <button
+                                onClick={() => setVisibleCount(7)}
+                                className="text-white/50 hover:text-white/80 text-sm underline px-4"
+                            >
+                                Kembali ke Awal
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

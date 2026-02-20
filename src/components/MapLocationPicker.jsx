@@ -52,7 +52,10 @@ const formatCoordName = (lat, lng) => {
 
 // Main MapLocationPicker component
 const MapLocationPicker = ({ isOpen, onClose, onSelectLocation, initialPosition }) => {
-    const [position, setPosition] = useState(initialPosition || [-6.248770, 106.869164]);
+    const safeInitial = initialPosition
+        ? [parseFloat(initialPosition[0]), parseFloat(initialPosition[1])]
+        : [-6.248770, 106.869164];
+    const [position, setPosition] = useState(safeInitial);
     const [locationInfo, setLocationInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');

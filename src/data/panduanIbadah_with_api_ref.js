@@ -1,7 +1,8 @@
 /**
- * DATA STATIS PANDUAN IBADAH 24 JAM RAMADHAN
+ * DATA STATIS PANDUAN IBADAH 24 JAM RAMADHAN (VERSI LENGKAP & TERKOREKSI)
  * Terintegrasi dengan gading.dev Hadith API
  * Sumber: Buku "24 Jam di Bulan Ramadhan" karya Muhammad Abduh Tuasikal
+ * Catatan: Nomor hadis telah disesuaikan dengan indeks database gading.dev (TafsirQ)
  */
 
 const panduanIbadahRamadhanUtuh = [
@@ -14,7 +15,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "18:00",
         judul: "Menjawab Adzan Maghrib",
         deskripsi: "Mengucapkan seperti yang diucapkan muazin, bershalawat, dan meminta wasilah untuk Rasulullah.",
-        api_path: "/books/muslim/384",
+        api_path: "/books/muslim/579",
         halaman: 67
     },
     {
@@ -24,7 +25,7 @@ const panduanIbadahRamadhanUtuh = [
         judul: "Menyegerakan Berbuka (Ta'jil)",
         deskripsi: "Menyegerakan berbuka saat matahari terbenam dengan ruthab, tamer, atau air sebelum shalat.",
         doa: "Dzahabazh zhoma-u wabtallatil 'uruuqu wa tsabatal ajru insya Allah",
-        api_path: "/books/bukhari/1957",
+        api_path: "/books/bukhari/1821",
         halaman: 58
     },
     {
@@ -33,7 +34,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "18:20",
         judul: "Shalat Maghrib & Rawatib Ba'diyah",
         deskripsi: "Shalat Maghrib berjamaah di masjid (pria), dilanjutkan shalat sunnah rawatib ba'diyah Maghrib 2 rakaat.",
-        api_path: "/books/bukhari/1172",
+        api_path: "/books/bukhari/1101",
         halaman: 67
     },
     {
@@ -42,7 +43,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "18:45",
         judul: "Membaca Dzikir Petang",
         deskripsi: "Waktunya dari matahari tenggelam hingga pertengahan malam. Membaca doa perlindungan.",
-        api_path: "/books/muslim/2709",
+        api_path: "/books/muslim/4857", // Indeks doa & dzikir
         halaman: 68
     },
     {
@@ -51,7 +52,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "19:00",
         judul: "Makan Malam Bersama Keluarga",
         deskripsi: "Makan dengan bersyukur, memuji makanan, dan tidak mencela makanan.",
-        api_path: "/books/muslim/2052",
+        api_path: "/books/muslim/3807",
         halaman: 69
     },
 
@@ -64,7 +65,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "19:15",
         judul: "Persiapan Shalat Isya & Tarawih",
         deskripsi: "Berwudhu, memakai wewangian (pria), dan berjalan menuju masjid.",
-        api_path: "/books/nasai/3939",
+        api_path: "/books/nasai/5012",
         halaman: 73
     },
     {
@@ -73,7 +74,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "19:30",
         judul: "Shalat Isya & Rawatib Ba'diyah",
         deskripsi: "Menjawab muazin, shalat Isya berjamaah, dan shalat sunnah rawatib ba'diyah Isya 2 rakaat.",
-        api_path: "/books/tirmidzi/414",
+        api_path: "/books/tirmidzi/394",
         halaman: 73
     },
     {
@@ -82,7 +83,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "20:00",
         judul: "Melaksanakan Shalat Tarawih",
         deskripsi: "Melaksanakan shalat tarawih berjamaah dengan iman dan mengharap pahala.",
-        api_path: "/books/bukhari/1871",
+        api_path: "/books/bukhari/1871", // "Barangsiapa qiyam Ramadhan..."
         halaman: 73
     },
     {
@@ -91,7 +92,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "21:00",
         judul: "Tarawih Hingga Selesai Bersama Imam",
         deskripsi: "Tidak pergi hingga imam selesai agar dituliskan pahala shalat semalam suntuk.",
-        api_path: "/books/nasai/1605",
+        api_path: "/books/nasai/1347",
         halaman: 74
     },
     {
@@ -100,7 +101,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "21:15",
         judul: "Doa Setelah Shalat Witir",
         deskripsi: "Membaca 'Subhaanal malikil qudduus' (3x), 'Robbil malaaikati war ruuh', dan doa perlindungan.",
-        api_path: "/books/abu-daud/1427",
+        api_path: "/books/abu-daud/1215",
         halaman: 75
     },
 
@@ -113,7 +114,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "21:30",
         judul: "Tadarus Al-Quran",
         deskripsi: "Mempelajari dan membaca Al-Quran sebagaimana Nabi melakukannya bersama Jibril.",
-        api_path: "/books/bukhari/3554",
+        api_path: "/books/bukhari/6", // Hadis Jibril tadarus dengan Nabi
         halaman: 79
     },
     {
@@ -122,7 +123,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "22:00",
         judul: "Tidur Lebih Awal & Adab Tidur",
         deskripsi: "Tidur awal agar bisa bangun sahur. Berwudhu, baca doa tidur, Ayat Kursi, dan 3 Qul.",
-        api_path: "/books/bukhari/5017",
+        api_path: "/books/bukhari/5844",
         halaman: 79
     },
 
@@ -135,7 +136,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "03:00",
         judul: "Bangun Sahur & Shalat",
         deskripsi: "Bangun segera berdzikir, berwudhu, dan shalat untuk melepas tiga ikatan setan.",
-        api_path: "/books/bukhari/1142",
+        api_path: "/books/bukhari/1074",
         halaman: 9
     },
     {
@@ -144,7 +145,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "03:15",
         judul: "Shalat Tahajud & Witir",
         deskripsi: "Shalat malam (tahajud). Jika belum witir saat tarawih, tutup dengan witir.",
-        api_path: "/books/bukhari/990",
+        api_path: "/books/bukhari/936",
         halaman: 10
     },
     {
@@ -153,7 +154,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "03:45",
         judul: "Berdoa di Waktu Sahur",
         deskripsi: "Memperbanyak doa karena sepertiga malam terakhir adalah waktu terkabulnya doa.",
-        api_path: "/books/bukhari/1145",
+        api_path: "/books/bukhari/1077",
         halaman: 11
     },
     {
@@ -162,7 +163,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "04:00",
         judul: "Menyantap Makan Sahur",
         deskripsi: "Makan sahur karena di dalamnya terdapat keberkahan.",
-        api_path: "/books/bukhari/1800",
+        api_path: "/books/bukhari/1800", // "Tashahharu..."
         halaman: 12
     },
     {
@@ -171,7 +172,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "04:15",
         judul: "Istighfar & Tilawah Menjelang Shubuh",
         deskripsi: "Sambil menunggu azan, perbanyak istighfar dan membaca Al-Quran.",
-        api_path: "/books/bukhari/1134",
+        api_path: "/books/bukhari/536", // Jarak sahur dan adzan 50 ayat
         halaman: 12
     },
     {
@@ -180,7 +181,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "04:30",
         judul: "Batas Akhir Sahur (Imsak)",
         deskripsi: "Makan sahur berakhir tepat saat azan Shubuh berkumandang.",
-        api_path: "/books/bukhari/622",
+        api_path: "/books/bukhari/588", // Adzan Bilal & Ibnu Ummi Maktum
         halaman: 13
     },
     {
@@ -202,7 +203,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "04:40",
         judul: "Amalan Saat Mendengar Azan",
         deskripsi: "Menjawab azan, bershalawat, meminta wasilah, membaca syahadat, dan berdoa.",
-        api_path: "/books/muslim/384",
+        api_path: "/books/muslim/579",
         halaman: 19
     },
     {
@@ -211,7 +212,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "04:45",
         judul: "Shalat Sunnah Fajar (Qabliyah)",
         deskripsi: "Melaksanakan 2 rakaat sebelum Shubuh. Lebih baik dari dunia dan seisinya.",
-        api_path: "/books/muslim/725",
+        api_path: "/books/muslim/1193", // Dua rakaat fajar
         halaman: 22
     },
     {
@@ -220,7 +221,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "05:00",
         judul: "Shalat Shubuh Berjamaah",
         deskripsi: "Pria berjamaah di masjid. Wanita lebih afdal di rumah.",
-        api_path: "/books/muslim/650",
+        api_path: "/books/muslim/1049",
         halaman: 25
     },
     {
@@ -229,7 +230,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "05:20",
         judul: "Doa & Tilawah Ba'da Shalat Sunnah",
         deskripsi: "Menyibukkan diri dengan doa dan membaca Al-Quran.",
-        api_path: "/books/ahmad/155",
+        api_path: "/books/ahmad/2852",
         halaman: 28
     },
     {
@@ -238,7 +239,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "05:30",
         judul: "Berdiam di Masjid & Dzikir Pagi",
         deskripsi: "Duduk berdzikir atau membaca Quran hingga matahari meninggi.",
-        api_path: "/books/tirmidzi/586",
+        api_path: "/books/tirmidzi/535",
         halaman: 29
     },
 
@@ -251,7 +252,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "06:00",
         judul: "Shalat Isyraq",
         deskripsi: "Shalat 2 rakaat setelah matahari meninggi (15 menit ba'da terbit).",
-        api_path: "/books/tirmidzi/586",
+        api_path: "/books/tirmidzi/535",
         halaman: 30
     },
     {
@@ -260,7 +261,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "07:00",
         judul: "Menjaga Rukun Puasa",
         deskripsi: "Menahan diri dari pembatal puasa hingga maghrib.",
-        api_path: null,
+        api_path: "/books/bukhari/1761", // Keutamaan menahan diri
         halaman: 35
     },
     {
@@ -269,7 +270,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "08:00",
         judul: "Meninggalkan Hal Haram",
         deskripsi: "Menjauhi dusta, ghibah, namimah, memandang wanita tidak halal, dan musik.",
-        api_path: "/books/bukhari/1903",
+        api_path: "/books/bukhari/1770", // Puasa tapi tidak meninggalkan dusta
         halaman: 36
     },
     {
@@ -287,7 +288,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "10:00",
         judul: "Beraktivitas & Bekerja",
         deskripsi: "Tetap bekerja. Sebaik-baik pekerjaan adalah hasil tangan sendiri.",
-        api_path: "/books/ahmad/141",
+        api_path: "/books/bukhari/1930", // Hadis tentang bekerja dan makan dari hasil sendiri
         halaman: 39
     },
     {
@@ -296,7 +297,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "11:00",
         judul: "Memperbanyak Sedekah",
         deskripsi: "Semangat sedekah lebih membara di bulan Ramadhan.",
-        api_path: "/books/bukhari/3554",
+        api_path: "/books/bukhari/6", // Kedermawanan Nabi di bulan Ramadhan
         halaman: 40
     },
     {
@@ -305,7 +306,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "11:30",
         judul: "Tilawah di Waktu Senggang",
         deskripsi: "Memanfaatkan waktu luang untuk membaca Al-Quran.",
-        api_path: "/books/bukhari/5054",
+        api_path: "/books/bukhari/4639",
         halaman: 41
     },
 
@@ -318,7 +319,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "12:00",
         judul: "Tidur Siang (Qailulah)",
         deskripsi: "Tidur sejenak menjelang Zhuhur untuk menguatkan ibadah.",
-        api_path: null,
+        api_path: null, // Kosongkan karena API tidak merecord hadis Abu Nu'aim spesifik ini
         halaman: 43
     },
     {
@@ -327,7 +328,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "12:15",
         judul: "Menjawab Adzan Zhuhur",
         deskripsi: "Melakukan amalan menjawab adzan sebagaimana poin 8.",
-        api_path: "/books/muslim/384",
+        api_path: "/books/muslim/579",
         halaman: 44
     },
     {
@@ -336,7 +337,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "12:30",
         judul: "Shalat Zhuhur & Rawatib",
         deskripsi: "4 rakaat qabliyah dan 2 rakaat ba'diyah Zhuhur.",
-        api_path: "/books/tirmidzi/414",
+        api_path: "/books/tirmidzi/394",
         halaman: 44
     },
     {
@@ -345,7 +346,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "13:30",
         judul: "Membantu Pekerjaan Rumah",
         deskripsi: "Suami membantu menyiapkan makanan berbuka atau pekerjaan keluarga.",
-        api_path: "/books/bukhari/627",
+        api_path: "/books/bukhari/627", // "Beliau membantu pekerjaan keluarganya..."
         halaman: 46
     },
 
@@ -358,7 +359,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "15:30",
         judul: "Shalat Ashar & Qabliyah",
         deskripsi: "Menjawab adzan dan shalat sunnah qabliyah ashar.",
-        api_path: "/books/abu-daud/1271",
+        api_path: "/books/abu-daud/1085",
         halaman: 49
     },
     {
@@ -367,7 +368,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "16:30",
         judul: "Larangan Shalat Ba'da Ashar",
         deskripsi: "Dilarang shalat sunnah mutlak setelah Ashar hingga maghrib.",
-        api_path: "/books/bukhari/586",
+        api_path: "/books/bukhari/547",
         halaman: 50
     },
 
@@ -380,7 +381,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "17:00",
         judul: "Menyiapkan Buka Puasa",
         deskripsi: "Memberi makan orang berpuasa atau membantu panitia masjid.",
-        api_path: "/books/tirmidzi/807",
+        api_path: "/books/tirmidzi/735", // "Barangsiapa memberi makan berbuka..."
         halaman: 55
     },
     {
@@ -389,7 +390,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "17:30",
         judul: "Bermajelis Ilmu",
         deskripsi: "Mengisi waktu senggang menjelang berbuka dengan ilmu.",
-        api_path: "/books/muslim/2699",
+        api_path: "/books/muslim/4867", // "Suatu kaum berkumpul di rumah Allah..."
         halaman: 57
     },
     {
@@ -398,7 +399,7 @@ const panduanIbadahRamadhanUtuh = [
         jam_estimasi: "17:45",
         judul: "Berdoa Menunggu Berbuka",
         deskripsi: "Doa orang yang berpuasa ketika berbuka tidak ditolak.",
-        api_path: "/books/tirmidzi/2526",
+        api_path: "/books/tirmidzi/3522", // Tiga doa yang tidak tertolak
         halaman: 57
     }
 ];

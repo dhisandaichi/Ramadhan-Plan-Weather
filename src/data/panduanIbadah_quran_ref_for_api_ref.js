@@ -2,6 +2,7 @@
  * DATA STATIS AMALAN BERSUMBER QURAN (RAMADHAN)
  * Terintegrasi dengan equran.id API v2.0
  * Sumber: Buku "24 Jam di Bulan Ramadhan" karya Muhammad Abduh Tuasikal
+ * Catatan: Penomoran Surah dan Ayat Al-Quran bersifat universal, sehingga tidak ada pergeseran.
  */
 
 const amalanQuranRamadhan = [
@@ -78,7 +79,7 @@ const amalanQuranRamadhan = [
         judul: "Keutamaan Malam Lailatul Qadar",
         deskripsi: "Malam kemuliaan yang lebih baik dari seribu bulan, di mana malaikat turun dengan izin Rabbnya.",
         surat_nomor: 97,
-        ayat_nomor: 3, // Merujuk pada rentang ayat 3-5
+        ayat_nomor: 3, // Merujuk pada ayat ke-3 Surat Al-Qadr
         quran_api_path: "/api/v2/surat/97",
         halaman: 87
     }

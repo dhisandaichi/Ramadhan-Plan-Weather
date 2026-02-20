@@ -18,21 +18,25 @@ export const SecurityProvider = ({ children }) => {
 
     // Run automation detection on mount
     useEffect(() => {
-        const detection = detectAutomation();
+        const timer = setTimeout(() => {
+            const detection = detectAutomation();
 
-        if (detection.isBot) {
-            securityLog.log('BOT_DETECTED', detection);
-            setSecurityWarning({
-                type: 'automation',
-                message: 'Terdeteksi aktivitas mencurigakan. Beberapa fitur mungkin dibatasi.',
-                severity: 'high'
-            });
+            if (detection.isBot) {
+                securityLog.log('BOT_DETECTED', detection);
+                setSecurityWarning({
+                    type: 'automation',
+                    message: 'Terdeteksi aktivitas mencurigakan. Beberapa fitur mungkin dibatasi.',
+                    severity: 'high'
+                });
 
-            // Block if confidence is very high
-            if (detection.confidence >= 0.8) {
-                setIsBlocked(true);
+                // Block if confidence is very high
+                if (detection.confidence >= 0.8) {
+                    setIsBlocked(true);
+                }
             }
-        }
+        }, 1000); // Small delay to allow initial render
+
+        return () => clearTimeout(timer);
     }, []);
 
     // Listen for rate limit errors globally
@@ -121,6 +125,7 @@ export const SecurityProvider = ({ children }) => {
 /**
  * Hook to use security context
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSecurity = () => useContext(SecurityContext);
 
 export default SecurityProvider;
